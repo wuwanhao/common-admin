@@ -1,0 +1,45 @@
+# 项目启动端口配置
+server:
+  address: localhost:8080
+  # debug mode
+  mode: debug
+  # release模式
+  #model:release
+
+# 数组库配置
+db:
+  dialects: mysql
+  host: 127.0.0.1
+  port: 3306
+  db: demo
+  username: root
+  password: 123456
+  charset: utf8
+  #最大空闲数
+  maxIdle: 50
+  #最大连接数
+  maxOpen: 150
+
+
+# redis配置
+redis:
+  address: 127.0.0.1:6379
+  password: 123456
+
+# 图片地址和IP
+imageSettings:
+  # 本地磁盘地址
+  uploadDir: /admin-api/upload/
+  # 本地ip地址(线上地址可以更换)
+  imageHost: http://localhost:2000
+
+# log日志配置
+log:
+  path: ./log
+  name: sys
+  # 输出控制台
+  model: console
+  # 输出到文件
+  # model: file
+
+
