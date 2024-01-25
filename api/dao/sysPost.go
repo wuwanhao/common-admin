@@ -54,7 +54,7 @@ func CreateSysPost(sysPost entity.SysPost) bool {
 }
 
 // GetSysPostById 根据ID查询岗位
-func GetSysPostById(id uint) (sysPost entity.SysPost) {
+func GetSysPostById(id int) (sysPost entity.SysPost) {
 	db.Db.First(&sysPost, id)
 	return sysPost
 }

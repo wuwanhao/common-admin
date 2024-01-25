@@ -10,7 +10,7 @@ import (
 
 type ISysPostService interface {
 	CreateSysPost(c *gin.Context, sysPost entity.SysPost)
-	GetSysPostById(c *gin.Context, Id uint)
+	GetSysPostById(c *gin.Context, Id int)
 	UpdateSysPost(c *gin.Context, sysPost entity.SysPost)
 	DeleteSysPostById(c *gin.Context, dto entity.SysPostIdDto)
 	BatchDeleteSysPost(c *gin.Context, dto entity.DelSysPostDto)
@@ -70,7 +70,7 @@ func (s SysPostServiceImpl) UpdateSysPost(c *gin.Context, sysPost entity.SysPost
 }
 
 // 根据ID查询岗位
-func (s SysPostServiceImpl)GetSysPostById(c *gin.Context, id uint)  {
+func (s SysPostServiceImpl)GetSysPostById(c *gin.Context, id int)  {
 	result.Success(c, dao.GetSysPostById(id))
 }
 
