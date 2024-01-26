@@ -48,4 +48,10 @@ func register(router *gin.Engine)  {
 	router.PUT("/api/dept/update", controller.UpdateSysDept)
 	router.DELETE("/api/dept/delete", controller.DeleteSysDeptById)
 	router.GET("/api/dept/list", controller.GetSysDeptList)
+	router.GET("/api/menu/vo/list", controller.QuerySysMenuVoList)
+	router.POST("/api/menu/add", controller.CreateSysMenu)
+	router.GET("/api/menu/info", controller.GetSysMenu)
+	router.PUT("/api/menu/update", controller.UpdateSysMenu)
+	router.DELETE("/api/menu/delete", controller.DeleteSysRoleMenu)
+	router.GET("/api/menu/list", controller.GetSysMenuList)
 }
