@@ -13,7 +13,6 @@ import (
 // InitRouter 初始化路由
 func InitRouter() *gin.Engine {
 
-
 	router := gin.New()
 	// 宕机时自动恢复
 	router.Use(gin.Recovery())
@@ -21,16 +20,16 @@ func InitRouter() *gin.Engine {
 	router.Use(middleware.Cors())
 	// 图片访问路径静态文件夹可直接访问
 	router.StaticFS(config.Config.ImageSettings.UploadDir,
-	http.Dir(config.Config.ImageSettings.UploadDir))
-	// 日志中间件
-	router.Use(middleware.Logger())
+		http.Dir(config.Config.ImageSettings.UploadDir))
+	// 日志中间件，这里的这些中间件本质上就是一个参数为gin.Context的函数
+	router.Use(middleware.Logger(), middleware.LogMiddleware())
 	// 注册路由
 	register(router)
 	return router
 }
 
 // register 路由接口
-func register(router *gin.Engine)  {
+func register(router *gin.Engine) {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/api/captcha", controller.Captcha)
 	router.POST("/api/login", controller.Login)
@@ -81,7 +80,10 @@ func register(router *gin.Engine)  {
 		jwt.DELETE("/sysLoginInfo/batch/delete", controller.BatchDeleteSysLoginInfo)
 		jwt.DELETE("/sysLoginInfo/delete", controller.DeleteSysLoginInfoById)
 		jwt.DELETE("/sysLoginInfo/clean", controller.CleanSysLoginInfo)
+		jwt.GET("/sysOperationLog/list", controller.GetSysOperationLogList)
+		jwt.DELETE("/sysOperationLog/delete", controller.DeleteSysOperationLogById)
+		jwt.DELETE("/sysOperationLog/batch/delete", controller.BatchDeleteSysOperationLog)
+		jwt.DELETE("/sysOperationLog/clean", controller.CleanSysOperationLog)
 	}
-
 
 }
