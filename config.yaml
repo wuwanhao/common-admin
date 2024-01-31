@@ -28,8 +28,8 @@ redis:
 
 # 图片地址和IP
 imageSettings:
-  # 本地磁盘地址
-  uploadDir: /admin-api/upload/
+  # 本地磁盘地址，这里需要填写相对路径，否则会提示无权限创建目录
+  uploadDir: ./upload/
   # 本地ip地址(线上地址可以更换)
   imageHost: http://localhost:2000
 

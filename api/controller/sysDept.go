@@ -17,6 +17,7 @@ var sysDept entity.SysDept
 // @Param data body entity.SysDept true "data"
 // @Success 200 {object} result.Result
 // @router /api/dept/add [post]
+// @Security ApiKeyAuth
 func CreateSysDept(c *gin.Context) {
 	_ = c.BindJSON(&sysDept)
 	service.SysDeptService().CreateSysDept(c, sysDept)
@@ -27,6 +28,7 @@ func CreateSysDept(c *gin.Context) {
 // @Description 部门下拉列表接口
 // @Success 200 {object} result.Result
 // @router /api/dept/vo/list [get]
+// @Security ApiKeyAuth
 func QuerySysDeptVoList(c *gin.Context) {
 	service.SysDeptService().QuerySysDeptVoList(c)
 }
@@ -37,6 +39,7 @@ func QuerySysDeptVoList(c *gin.Context) {
 // @Param id query int true "ID"
 // @Success 200 {object} result.Result
 // @router /api/dept/info [get]
+// @Security ApiKeyAuth
 func GetSysDeptById(c *gin.Context) {
 	Id, _ := strconv.Atoi(c.Query("id"))
 	service.SysDeptService().GetSysDeptById(c, Id)
@@ -60,6 +63,7 @@ func UpdateSysDept(c *gin.Context) {
 // @Param data body entity.SysDeptIdDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/dept/delete [delete]
+// @Security ApiKeyAuth
 func DeleteSysDeptById(c *gin.Context) {
 	var dto entity.SysDeptIdDto
 	_ = c.BindJSON(&dto)
@@ -74,6 +78,7 @@ func DeleteSysDeptById(c *gin.Context) {
 // @Param deptStatus query string false "部门状态"
 // @Success 200 {object} result.Result
 // @router /api/dept/list [get]
+// @Security ApiKeyAuth
 func GetSysDeptList(c *gin.Context) {
 	DeptName := c.Query("deptName")
 	DeptStatus := c.Query("deptStatus")

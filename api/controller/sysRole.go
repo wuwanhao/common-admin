@@ -8,6 +8,7 @@ import (
 )
 
 // 创建角色
+// @Security ApiKeyAuth
 func CreateSysRole(c *gin.Context) {
 	var dto entity.AddSysRoleDto
 	_ = c.BindJSON(&dto)
@@ -15,12 +16,14 @@ func CreateSysRole(c *gin.Context) {
 }
 
 // / 获取角色详细信息
+// @Security ApiKeyAuth
 func GetSysRoleBYId(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Query("id"))
 	service.SysRoleService().GetSysRoleById(c, id)
 }
 
 // 修改角色
+// @Security ApiKeyAuth
 func UpdateSysRole(c *gin.Context) {
 	var dto entity.UpdateSysRoleDto
 	_ = c.BindJSON(&dto)
@@ -28,6 +31,7 @@ func UpdateSysRole(c *gin.Context) {
 }
 
 // 根据ID删除角色
+// @Security ApiKeyAuth
 func DeleteSysRoleById(c *gin.Context) {
 	var dto entity.SysRoleIdDto
 	_ = c.BindJSON(&dto)
@@ -35,6 +39,7 @@ func DeleteSysRoleById(c *gin.Context) {
 }
 
 // 更新角色状态
+// @Security ApiKeyAuth
 func UpdateSysRoleStatus(c *gin.Context) {
 	var dto entity.UpdateSysRoleStatusDto
 	_ = c.BindJSON(&dto)
@@ -42,6 +47,7 @@ func UpdateSysRoleStatus(c *gin.Context) {
 }
 
 // 分页查询角色列表
+// @Security ApiKeyAuth
 func GetSysRoleList(c *gin.Context) {
 	PageNum, _ := strconv.Atoi(c.Query("pageNum"))
 	PageSize, _ := strconv.Atoi(c.Query("pageSize"))
@@ -54,17 +60,20 @@ func GetSysRoleList(c *gin.Context) {
 }
 
 // 角色下拉选项列表
+// @Security ApiKeyAuth
 func QuerySysRoleVoList(c *gin.Context) {
 	service.SysRoleService().QuerySysRoleVoList(c)
 }
 
 // 根据角色ID查询菜单数据
+// @Security ApiKeyAuth
 func QueryRoleMenuIdList(c *gin.Context) {
 	Id, _ := strconv.Atoi(c.Query("Id"))
 	service.SysRoleService().QueryRoleMenuIdList(c, Id)
 }
 
 // 分配权限
+// @Security ApiKeyAuth
 func AssignPermissions(c *gin.Context) {
 	var RoleMenu entity.RoleMenu
 	_ = c.BindJSON(&RoleMenu)

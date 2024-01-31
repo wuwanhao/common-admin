@@ -23,6 +23,7 @@ func Login(c *gin.Context) {
 // 新增用户
 // @Summary 新增用户接口
 // @Produce json
+// @Security ApiKeyAuth
 // @Description 新增用户接口
 // @Param data body entity.AddSysAdminDto true "data"
 // @Success 200 {object} result.Result
@@ -37,6 +38,7 @@ func CreateSysAdmin(c *gin.Context) {
 // 根据id查询用户
 // @Summary 根据id查询用户接口
 // @Produce json
+// @Security ApiKeyAuth
 // @Description 根据id查询用户接口
 // @Param Id query int true "Id"
 // @Success 200 {object} result.Result
@@ -48,6 +50,7 @@ func GetSysAdminInfo(c *gin.Context) {
 // 修改用户
 // @Summary 修改用户接口
 // @Produce json
+// @Security ApiKeyAuth
 // @Description 修改用户接口
 // @Param data body entity.UpdateSysAdminInfo true "data"
 // @Success 200 {object} result.Result
@@ -66,6 +69,7 @@ func UpdateSysAdmin(c *gin.Context) {
 // @Param data body entity.SysAdminIdDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/admin/delete [delete]
+// @Security ApiKeyAuth
 func DeleteSysAdminById(c *gin.Context) {
 	var dto entity.SysAdminIdDto
 	_ = c.BindJSON(&dto)
@@ -79,6 +83,7 @@ func DeleteSysAdminById(c *gin.Context) {
 // @Param data body entity.UpdateSysAdminStatusDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/admin/updateStatus [put]
+// @Security ApiKeyAuth
 func UpdateSysAdminStatus(c *gin.Context) {
 	var dto entity.UpdateSysAdminStatusDto
 	_ = c.BindJSON(&dto)
@@ -91,6 +96,7 @@ func UpdateSysAdminStatus(c *gin.Context) {
 // @Param data body entity.ResetSysAdminPasswordDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/admin/updatePassword [put]
+// @Security ApiKeyAuth
 func ResetSysAdminPassword(c *gin.Context) {
 	var dto entity.ResetSysAdminPasswordDto
 	_ = c.BindJSON(&dto)
@@ -109,6 +115,7 @@ func ResetSysAdminPassword(c *gin.Context) {
 // @Param endTime query string false "结束时间"
 // @Success 200 {object} result.Result
 // @router /api/admin/list [get]
+// @Security ApiKeyAuth
 func GetSysAdminList(c *gin.Context) {
 	PageNum, _ := strconv.Atoi(c.Query("pageNum"))
 	PageSize, _ := strconv.Atoi(c.Query("pageSize"))
@@ -125,8 +132,10 @@ func GetSysAdminList(c *gin.Context) {
 // @Summary 修改个人信息接口
 // @Produce json
 // @Description 修改个人信息接口
-// @Param data body entity.UpdatePersonalDto true "data" // @Success 200 {object} result.Result
+// @Param data body entity.UpdatePersonalDto true "data"
+// @Success 200 {object} result.Result
 // @router /api/admin/updatePersonal [put]
+// @Security ApiKeyAuth
 func UpdatePersonal(c *gin.Context) {
 	var dto entity.UpdatePersonalInfoDto
 	_ = c.BindJSON(&dto)
@@ -140,6 +149,7 @@ func UpdatePersonal(c *gin.Context) {
 // @Param data body entity.UpdatePersonalPasswordDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/admin/updatePersonalPassword [put]
+// @Security ApiKeyAuth
 func UpdatePersonalPassword(c *gin.Context) {
 	var dto entity.UpdatePersonalPasswordDto
 	_ = c.BindJSON(&dto)

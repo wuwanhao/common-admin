@@ -72,7 +72,6 @@ func CreateSysMenu(addSysMenu entity.SysMenu) bool {
 
 }
 
-
 // GetSysMenu 根据ID查询菜单详情
 func GetSysMenu(Id int) (sysMenu entity.SysMenu) {
 	db.Db.First(&sysMenu, Id)
@@ -98,6 +97,7 @@ func GetSysRoleMenu(id uint) (sysRoleMenu entity.SysRoleMenu) {
 	db.Db.Where("menu_id = ?", id).First(&sysRoleMenu)
 	return sysRoleMenu
 }
+
 // 删除菜单
 func DeleteSysMenu(dto entity.SysMenuIdDto) bool {
 	// 菜单已分配角色不能删除
@@ -124,15 +124,55 @@ func GetSysMenuList(MenuName string, MenuStatus string) (sysMenu []*entity.SysMe
 }
 
 // 当前登录用户左侧菜单级列表
-func QueryMenuVoList(AdminId, MenuId int) (menusVo []entity.MenuSvo) {
+func QueryMenuVoList(AdminId, MenuId uint) (menusVo []entity.MenuSvo) {
 	const status, menuStatus, menuType uint = 1, 2, 2
 	db.Db.Table("sys_menu sm").
 		Select("sm.menu_name, sm.icon, sm.url").
-		Joins(" LEFT JOIN sys_role_menu srm ON sm.id = srm.admin_id").
+		Joins("LEFT JOIN sys_role_menu srm ON sm.id = srm.admin_id").
 		Joins("LEFT JOIN sys_role sr ON sr.id = srm.role_id").
 		Joins("LEFT JOIN sys_admin_role sar ON sar.role_id = sr.id").
-		Joins("LEFT JOIN sys_admin sa ON sa.id = sar.admin_id")
-
-
+		Joins("LEFT JOIN sys_admin sa ON sa.id = sar.admin_id").
+		Where("sr.status = ?", status).
+		Where("sm.menu_status = ?", menuStatus).
+		Where("sm.menu_type = ?", menuType).
+		Where("sm.parent_id = ?", MenuId).
+		Where("sa.id = ?", AdminId).
+		Order("sm.sort").
+		Scan(&menusVo)
+	return menusVo
 }
 
+// 当前登录用户左侧菜单列表
+func QueryLeftMenuList(Id uint) (leftMenuVo []entity.LeftMenuVo) {
+	const status, menuStatus, menuType uint = 1, 2, 1
+	db.Db.Table("sys_menu sm").
+		Select("sm.id, sm.menu_name, sm.url, sm.icon").
+		Joins("LEFT JOIN sys_role_menu srm ON sm.id = srm.menu_id").
+		Joins("LEFT JOIN sys_role sr ON sr.id = srm.role_id").
+		Joins("LEFT JOIN sys_admin_role sar ON sar.role_id = sr.id").
+		Joins("LEFT JOIN sys_admin sa ON sa.id = sar.admin_id").
+		Where("sr.status = ?", status).
+		Where("sm.menu_status = ?", menuStatus).
+		Where("sm.menu_type = ?", menuType).
+		Where("sa.id = ?", Id).
+		Order("sm.sort").
+		Scan(&leftMenuVo)
+	return leftMenuVo
+}
+
+// 当前登录用户权限列表
+func QueryPermissionList(Id uint) (valueVo []entity.ValueVo) {
+	const status, menuStatus, menuType uint = 1, 2, 1
+	db.Db.Table("sys_menu sm").
+		Select("sm.value").
+		Joins("LEFT JOIN sys_role_menu srm ON sm.id = srm.menu_id").
+		Joins("LEFT JOIN sys_role sr ON sr.id = srm.role_id").
+		Joins("LEFT JOIN sys_admin_role sar ON sar.role_id = sr.id").
+		Joins("LEFT JOIN sys_admin sa ON sa.id = sar.admin_id").
+		Where("sr.status = ?", status).
+		Where("sm.menu_status = ?", menuStatus).
+		Not("sm.menu_type = ?", menuType).
+		Where("sa.id = ?", Id).
+		Scan(&valueVo)
+	return valueVo
+}

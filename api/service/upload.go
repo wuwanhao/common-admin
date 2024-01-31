@@ -23,6 +23,7 @@ type UploadServiceImpl struct {
 }
 
 func (u UploadServiceImpl)Upload(c *gin.Context)  {
+	// 拿到文件句柄
 	file, err := c.FormFile("file")
 	if err != nil {
 		result.Failed(c, int(result.ApiCode.FILEUPLOADERROR),
@@ -36,11 +37,15 @@ func (u UploadServiceImpl)Upload(c *gin.Context)  {
 			config.Config.ImageSettings.UploadDir,
 			fmt.Sprintf("%04d", now.Year()),
 			fmt.Sprintf("%02d", now.Month()),
-			fmt.Sprintf("%04d", now.Day()))
-	util.CreateDir(filePath)
+			fmt.Sprintf("%02d", now.Day()))
+	// 创建文件保存目录
+	err = util.CreateDir(filePath)
+
+
 	fullPath := filePath + "/" + fileName
-	fmt.Println(fullPath)
-	c.SaveUploadedFile(file, fullPath)
+	fmt.Println("file full path:" + fullPath)
+	err = c.SaveUploadedFile(file, fullPath)
+	fmt.Println(err)
 	result.Success(c, fullPath)
 }
 

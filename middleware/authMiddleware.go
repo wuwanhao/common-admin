@@ -3,6 +3,7 @@ package middleware
 import (
 	"admin-api/common/result"
 	"admin-api/middleware/constant"
+	"admin-api/pkg/jwt"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -24,10 +25,16 @@ func AuthMiddleware() func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		// todo 检验token
-		var token = "token"
+		// 检验token
+		mc, err := jwt.ValidateToken(parts[1])
+		if err != nil {
+			result.Failed(c, int(result.ApiCode.INVALIDTOKEN),
+				result.ApiCode.GetMessage(result.ApiCode.INVALIDTOKEN))
+			c.Abort()
+			return
+		}
 		// 存用户信息
-		c.Set(constant.ContextKeyUserObj, token)
+		c.Set(constant.ContextKeyUserObj, mc)
 		c.Next()
 	}
 }

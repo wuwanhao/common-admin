@@ -17,6 +17,7 @@ var sysPost = entity.SysPost{}
 // @Param date body entity.SysPost true "data"
 // @Success 200 {object} result.Result
 // @router /api/post/add [post]
+// @Security ApiKeyAuth
 func CreateSysPost(c *gin.Context) {
 	_ = c.BindJSON(&sysPost)
 	service.SysPostService().CreateSysPost(c, sysPost)
@@ -29,6 +30,7 @@ func CreateSysPost(c *gin.Context) {
 // @Param Id query int true "ID"
 // @Success 200 {object} result.Result
 // @router /api/post/info [get]
+// @Security ApiKeyAuth
 func GetSysPostById(c *gin.Context)  {
 	Id, _ := strconv.Atoi(c.Query("id"))
 	service.SysPostService().GetSysPostById(c, Id)
@@ -41,12 +43,14 @@ func GetSysPostById(c *gin.Context)  {
 // @Param data body entity.SysPost true "data"
 // @Success 200 {object} result.Result
 // @router /api/post/update [put]
+// @Security ApiKeyAuth
 func UpdateSysPost(c *gin.Context) {
 	_ = c.BindJSON(&sysPost)
 	service.SysPostService().UpdateSysPost(c, sysPost)
 }
 
 // 根据ID删除岗位
+// @Security ApiKeyAuth
 func DeleteSysPostById(c *gin.Context)  {
 	var dto entity.SysPostIdDto
 	_ = c.BindJSON(&dto)
@@ -54,6 +58,7 @@ func DeleteSysPostById(c *gin.Context)  {
 }
 
 // 批量删除岗位
+// @Security ApiKeyAuth
 func BatchDeleteSysPost(c *gin.Context) {
 	var dto entity.DelSysPostDto
 	_ = c.BindJSON(&dto)
@@ -67,6 +72,7 @@ func BatchDeleteSysPost(c *gin.Context) {
 // @Param data body entity.UpdateSysPostStatusDto true "data"
 // @Success 200 {object} result.Result
 // @router /api/post/updateStatus [put]
+// @Security ApiKeyAuth
 func UpdateSysPostStatus(c *gin.Context) {
 	var dto entity.UpdateSysPostStatusDto
 	_ = c.BindJSON(&dto)
@@ -84,6 +90,7 @@ func UpdateSysPostStatus(c *gin.Context) {
 // @Param EndTime query string false "结束时间"
 // @Success 200 {object} result.Result
 // @router /api/post/list [get]
+// @Security ApiKeyAuth
 func GetSysPostList(c *gin.Context) {
 	PageNum, _ := strconv.Atoi(c.Query("pageNum"))
 	PageSize, _ := strconv.Atoi(c.Query("pageSize"))
@@ -100,6 +107,7 @@ func GetSysPostList(c *gin.Context) {
 // @Description 岗位下拉列表
 // @Success 200 {object} result.Result
 // @router /api/post/vo/list [get]
+// @Security ApiKeyAuth
 func QuerySysPostVoList(c *gin.Context) {
 	service.SysPostService().QuerySysPostVoList(c)
 }
