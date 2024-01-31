@@ -26,14 +26,12 @@ type ISysAdminService interface {
 	UpdatePersonalPassword(c *gin.Context, dto entity.UpdatePersonalPasswordDto)
 }
 
-
-
 // 接口实现
 type SysAdminServiceImpl struct {
 }
 
 // UpdatePersonalPassword 修改个人密码
-func (s SysAdminServiceImpl)UpdatePersonalPassword(c *gin.Context, dto entity.UpdatePersonalPasswordDto)  {
+func (s SysAdminServiceImpl) UpdatePersonalPassword(c *gin.Context, dto entity.UpdatePersonalPasswordDto) {
 
 	// 参数完整性校验
 	err := validator.New().Struct(dto)
@@ -64,7 +62,7 @@ func (s SysAdminServiceImpl)UpdatePersonalPassword(c *gin.Context, dto entity.Up
 	sysAdminUpdatedPassword := dao.UpdatePersonalPassword(dto)
 	tokenString, _ := jwt.GenerateTokenByAdmin(sysAdminUpdatedPassword)
 	result.Success(c, map[string]interface{}{
-		"token": tokenString,
+		"token":    tokenString,
 		"sysAdmin": sysAdminUpdatedPassword,
 	})
 
@@ -73,6 +71,8 @@ func (s SysAdminServiceImpl)UpdatePersonalPassword(c *gin.Context, dto entity.Up
 
 // Login 登录
 func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
+	ip := c.ClientIP()
+
 	// 登录参数校验
 	err := validator.New().Struct(dto)
 	if err != nil {
@@ -83,6 +83,7 @@ func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
 	// 验证码是否过期
 	code := util.RedisStore{}.Get(dto.IdKey, true)
 	if len(code) == 0 {
+		dao.CreateSysLoginInfo(dto.Username, ip, util.GetRealAddressByIP(ip), util.GetBrowser(c), util.GetOs(c), "验证码已过期", 2)
 		result.Failed(c, int(result.ApiCode.VerificationCodeHasExpired), result.ApiCode.GetMessage(result.ApiCode.VerificationCodeHasExpired))
 		return
 	}
@@ -90,6 +91,7 @@ func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
 	// 校验验证码
 	verify := CaptVerify(dto.IdKey, dto.Image)
 	if !verify {
+		dao.CreateSysLoginInfo(dto.Username, ip, util.GetRealAddressByIP(ip), util.GetBrowser(c), util.GetOs(c), "验证码不正确", 2)
 		result.Failed(c, int(result.ApiCode.CAPTCHANOTTRUE), result.ApiCode.GetMessage(result.ApiCode.CAPTCHANOTTRUE))
 		return
 	}
@@ -97,14 +99,15 @@ func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
 	// 校验密码
 	sysAdminDetail := dao.SysAdminDetail(dto)
 	if sysAdminDetail.Password != util.EncryptionMD5(dto.Password) {
+		dao.CreateSysLoginInfo(dto.Username, ip, util.GetRealAddressByIP(ip), util.GetBrowser(c), util.GetOs(c), "密码不正确", 2)
 		result.Failed(c, int(result.ApiCode.PASSWORDNOTTRUE), result.ApiCode.GetMessage(result.ApiCode.PASSWORDNOTTRUE))
 		return
 	}
 
 	// 用户状态检查
 	if sysAdminDetail.Status == constant.SYS_ADMIN_STATUS_DISABLE {
-		result.Failed(c, int(result.ApiCode.STATUSISENABLE),
-			result.ApiCode.GetMessage(result.ApiCode.STATUSISENABLE))
+		dao.CreateSysLoginInfo(dto.Username, ip, util.GetRealAddressByIP(ip), util.GetBrowser(c), util.GetOs(c), "账号已停用", 2)
+		result.Failed(c, int(result.ApiCode.STATUSISENABLE), result.ApiCode.GetMessage(result.ApiCode.STATUSISENABLE))
 		return
 	}
 
@@ -125,9 +128,8 @@ func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
 		item.Url = value.Url
 		// 加入到结果集
 		leftMenuVo = append(leftMenuVo, item)
-		
 	}
-	
+
 	// 权限列表
 	permissionList := dao.QueryPermissionList(sysAdminDetail.ID)
 	var stringList = make([]string, 0)
@@ -135,10 +137,11 @@ func (s SysAdminServiceImpl) Login(c *gin.Context, dto entity.LoginDto) {
 		stringList = append(stringList, value.Value)
 	}
 
+	dao.CreateSysLoginInfo(dto.Username, ip, util.GetRealAddressByIP(ip), util.GetBrowser(c), util.GetOs(c), "登录成功", 1)
 	result.Success(c, map[string]interface{}{
-		"token":       tokenString,
-		"systemAdmin": sysAdminDetail,
-		"leftMenuList": leftMenuList,
+		"token":          tokenString,
+		"systemAdmin":    sysAdminDetail,
+		"leftMenuList":   leftMenuList,
 		"permissionList": stringList,
 	})
 
@@ -206,15 +209,17 @@ func (s SysAdminServiceImpl) CreateSysAdmin(c *gin.Context, dto entity.AddSysAdm
 	if err != nil {
 		result.Failed(c, int(result.ApiCode.MissingNewAdminParameter),
 			result.ApiCode.GetMessage(result.ApiCode.MissingNewAdminParameter))
-		return }
+		return
+	}
 	bool := dao.CreateSysAdmin(dto)
 	if !bool {
 		result.Failed(c, int(result.ApiCode.USERNAMEALREADYEXISTS),
 			result.ApiCode.GetMessage(result.ApiCode.USERNAMEALREADYEXISTS))
-		return }
+		return
+	}
 	result.Success(c, bool)
-	return }
-
+	return
+}
 
 // 创建一个全局的SysAdminServiceImpl实例
 var sysAdminService = SysAdminServiceImpl{}
