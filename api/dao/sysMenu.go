@@ -123,3 +123,16 @@ func GetSysMenuList(MenuName string, MenuStatus string) (sysMenu []*entity.SysMe
 	return sysMenu
 }
 
+// 当前登录用户左侧菜单级列表
+func QueryMenuVoList(AdminId, MenuId int) (menusVo []entity.MenuSvo) {
+	const status, menuStatus, menuType uint = 1, 2, 2
+	db.Db.Table("sys_menu sm").
+		Select("sm.menu_name, sm.icon, sm.url").
+		Joins(" LEFT JOIN sys_role_menu srm ON sm.id = srm.admin_id").
+		Joins("LEFT JOIN sys_role sr ON sr.id = srm.role_id").
+		Joins("LEFT JOIN sys_admin_role sar ON sar.role_id = sr.id").
+		Joins("LEFT JOIN sys_admin sa ON sa.id = sar.admin_id")
+
+
+}
+

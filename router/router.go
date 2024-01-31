@@ -72,4 +72,6 @@ func register(router *gin.Engine)  {
 	router.PUT("/api/admin/updatePersonal", controller.UpdatePersonal)
 	router.PUT("/api/admin/updatePersonalPassword", controller.UpdatePersonalPassword)
 	router.GET("/api/admin/list", controller.GetSysAdminList)
+	router.POST("/upload", controller.Upload)
+
 }
